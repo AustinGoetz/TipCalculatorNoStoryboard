@@ -9,16 +9,30 @@
 import UIKit
 
 class ViewController: UIViewController {
+    
+    var safeArea: UILayoutGuide {
+        return self.view.safeAreaLayoutGuide
+    }
+    
+    var buttons: [UIButton] {
+        return [fivePercentButton, tenPercentButton, fifteenPercentButton, twentyPercentButton]
+    }
 
     override func viewDidLoad() {
         super.viewDidLoad()
+        addAllSubViews()
+        setUpStackView()
+        constrainViews()
+        self.view.backgroundColor = .white
     }
     
     // MARK: - Create SubViews
     
-    let tipTextField: UITextField = {
+    let billTextField: UITextField = {
     let textField = UITextField()
         textField.placeholder = "Enter Bill Total"
+        textField.borderStyle = .line
+        
         
         return textField
     }()
@@ -101,7 +115,7 @@ class ViewController: UIViewController {
     // MARK: - Add SubViews
     
     func addAllSubViews() {
-        self.view.addSubview(tipTextField)
+        self.view.addSubview(billTextField)
         self.view.addSubview(tipPercentageLabel)
         self.view.addSubview(fivePercentButton)
         self.view.addSubview(tenPercentButton)
@@ -123,7 +137,21 @@ class ViewController: UIViewController {
     // MARK: - Constrain Views
     
     func constrainViews() {
-        buttonStackView.anchor(
+        
+        billTextField.anchor(top: self.safeArea.topAnchor, bottom: nil, leading: self.safeArea.leadingAnchor, trailing: self.safeArea.trailingAnchor, topPadding: 40, bottomPadding: 0, leadingPadding: 50, trailingPadding: 50)
+        
+        tipPercentageLabel.anchor(top: billTextField.bottomAnchor, bottom: nil, leading: self.safeArea.leadingAnchor, trailing: self.safeArea.trailingAnchor, topPadding: 200, bottomPadding: 0, leadingPadding: 20, trailingPadding: 200)
+        
+        buttonStackView.anchor(top: tipPercentageLabel.bottomAnchor, bottom: nil, leading: self.safeArea.leadingAnchor, trailing: self.safeArea.trailingAnchor, topPadding: 20, bottomPadding: 0, leadingPadding: 10, trailingPadding: 10)
+        
+        totalLabel.anchor(top: buttonStackView.bottomAnchor, bottom: nil, leading: self.safeArea.leadingAnchor, trailing: self.safeArea.trailingAnchor, topPadding: 200, bottomPadding: 0, leadingPadding: 125, trailingPadding: 125)
+        
+        returnLabel.anchor(top: buttonStackView.bottomAnchor, bottom: nil, leading: totalLabel.trailingAnchor, trailing: self.safeArea.trailingAnchor, topPadding: 200, bottomPadding: 0, leadingPadding: 20, trailingPadding: 0)
+        
     }
+    
+
+    
+
 }
 
