@@ -17,12 +17,15 @@ class ViewController: UIViewController {
     var buttons: [UIButton] {
         return [fivePercentButton, tenPercentButton, fifteenPercentButton, twentyPercentButton]
     }
+    
+    var totalBeforeTip: String = ""
 
     override func viewDidLoad() {
         super.viewDidLoad()
         addAllSubViews()
         setUpStackView()
         constrainViews()
+        activateButtons()
         self.view.backgroundColor = .white
     }
     
@@ -52,6 +55,9 @@ class ViewController: UIViewController {
         button.setTitleColor(.white, for: .normal)
         button.contentHorizontalAlignment = .center
         button.backgroundColor = #colorLiteral(red: 0.1764705926, green: 0.4980392158, blue: 0.7568627596, alpha: 1)
+        button.layer.cornerRadius = 4
+        button.layer.borderWidth = 1
+        button.layer.borderColor = #colorLiteral(red: 0.2549019754, green: 0.2745098174, blue: 0.3019607961, alpha: 1)
         
         return button
     }()
@@ -62,6 +68,9 @@ class ViewController: UIViewController {
         button.setTitleColor(.white, for: .normal)
         button.contentHorizontalAlignment = .center
         button.backgroundColor = #colorLiteral(red: 0.1764705926, green: 0.4980392158, blue: 0.7568627596, alpha: 1)
+        button.layer.cornerRadius = 4
+        button.layer.borderWidth = 1
+        button.layer.borderColor = #colorLiteral(red: 0.2549019754, green: 0.2745098174, blue: 0.3019607961, alpha: 1)
         
         return button
     }()
@@ -72,6 +81,9 @@ class ViewController: UIViewController {
         button.setTitleColor(.white, for: .normal)
         button.contentHorizontalAlignment = .center
         button.backgroundColor = #colorLiteral(red: 0.1764705926, green: 0.4980392158, blue: 0.7568627596, alpha: 1)
+        button.layer.cornerRadius = 4
+        button.layer.borderWidth = 1
+        button.layer.borderColor = #colorLiteral(red: 0.2549019754, green: 0.2745098174, blue: 0.3019607961, alpha: 1)
         
         return button
     }()
@@ -82,6 +94,9 @@ class ViewController: UIViewController {
         button.setTitleColor(.white, for: .normal)
         button.contentHorizontalAlignment = .center
         button.backgroundColor = #colorLiteral(red: 0.1764705926, green: 0.4980392158, blue: 0.7568627596, alpha: 1)
+        button.layer.cornerRadius = 4
+        button.layer.borderWidth = 1
+        button.layer.borderColor = #colorLiteral(red: 0.2549019754, green: 0.2745098174, blue: 0.3019607961, alpha: 1)
         
         return button
     }()
@@ -91,14 +106,15 @@ class ViewController: UIViewController {
         stackView.axis = .horizontal
         stackView.distribution = .fillEqually
         stackView.alignment = .fill
-//        stackView.spacing = 15
+        stackView.spacing = 15
         
         return stackView
     }()
     
     let totalLabel: UILabel = {
         let label = UILabel()
-        label.text = "Total"
+        label.textAlignment = .right
+        label.text = "Total:"
         label.textColor = .black
 
         return label
@@ -107,7 +123,11 @@ class ViewController: UIViewController {
     let returnLabel: UILabel = {
         let label = UILabel()
         label.text = "0.00"
+        label.textAlignment = .center
         label.textColor = .green
+        label.layer.borderColor = #colorLiteral(red: 0.2549019754, green: 0.2745098174, blue: 0.3019607961, alpha: 1)
+        label.layer.borderWidth = 1
+        label.layer.cornerRadius = 4
         
         return label
     }()
@@ -138,20 +158,49 @@ class ViewController: UIViewController {
     
     func constrainViews() {
         
-        billTextField.anchor(top: self.safeArea.topAnchor, bottom: nil, leading: self.safeArea.leadingAnchor, trailing: self.safeArea.trailingAnchor, topPadding: 40, bottomPadding: 0, leadingPadding: 50, trailingPadding: 50)
+        billTextField.anchor(top: self.safeArea.topAnchor, bottom: nil, leading: self.safeArea.leadingAnchor, trailing: self.safeArea.trailingAnchor, topPadding: 60, bottomPadding: 0, leadingPadding: 50, trailingPadding: 50)
         
-        tipPercentageLabel.anchor(top: billTextField.bottomAnchor, bottom: nil, leading: self.safeArea.leadingAnchor, trailing: self.safeArea.trailingAnchor, topPadding: 200, bottomPadding: 0, leadingPadding: 20, trailingPadding: 200)
+        tipPercentageLabel.anchor(top: billTextField.bottomAnchor, bottom: nil, leading: self.safeArea.leadingAnchor, trailing: self.safeArea.trailingAnchor, topPadding: 200, bottomPadding: 0, leadingPadding: 20, trailingPadding: 220)
         
-        buttonStackView.anchor(top: tipPercentageLabel.bottomAnchor, bottom: nil, leading: self.safeArea.leadingAnchor, trailing: self.safeArea.trailingAnchor, topPadding: 20, bottomPadding: 0, leadingPadding: 10, trailingPadding: 10)
+        buttonStackView.anchor(top: tipPercentageLabel.bottomAnchor, bottom: nil, leading: self.safeArea.leadingAnchor, trailing: self.safeArea.trailingAnchor, topPadding: 20, bottomPadding: 0, leadingPadding: 20, trailingPadding: 20)
         
         totalLabel.anchor(top: buttonStackView.bottomAnchor, bottom: nil, leading: self.safeArea.leadingAnchor, trailing: self.safeArea.trailingAnchor, topPadding: 200, bottomPadding: 0, leadingPadding: 125, trailingPadding: 125)
         
         returnLabel.anchor(top: buttonStackView.bottomAnchor, bottom: nil, leading: totalLabel.trailingAnchor, trailing: self.safeArea.trailingAnchor, topPadding: 200, bottomPadding: 0, leadingPadding: 20, trailingPadding: 0)
-        
     }
     
-
-    
-
+    func activateButtons() {
+        buttons.forEach{$0.addTarget(self, action: #selector(tipsButtonTapped(sender:)), for: .touchUpInside)}
+    }
+    @objc func tipsButtonTapped(sender: UIButton) {
+        switch sender {
+        case fivePercentButton:
+            totalBeforeTip = billTextField.text ?? ""
+            guard let bill = Double(totalBeforeTip) else {return}
+            let tip = bill * 0.05
+            let billTotal = bill + tip
+            returnLabel.text = "\(billTotal)"
+        case tenPercentButton:
+            totalBeforeTip = billTextField.text ?? ""
+            guard let bill = Double(totalBeforeTip) else {return}
+            let tip = bill * 0.10
+            let billTotal = bill + tip
+            returnLabel.text = "\(billTotal)"
+        case fifteenPercentButton:
+            totalBeforeTip = billTextField.text ?? ""
+            guard let bill = Double(totalBeforeTip) else {return}
+            let tip = bill * 0.15
+            let billTotal = bill + tip
+            returnLabel.text = "\(billTotal)"
+        case twentyPercentButton:
+            totalBeforeTip = billTextField.text ?? ""
+            guard let bill = Double(totalBeforeTip) else {return}
+            let tip = bill * 0.20
+            let billTotal = bill + tip
+            returnLabel.text = "\(billTotal)"
+        default:
+            print("error")
+        }
+    }
 }
 
