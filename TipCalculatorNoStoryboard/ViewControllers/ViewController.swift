@@ -111,6 +111,15 @@ class ViewController: UIViewController {
         return stackView
     }()
     
+    let tipLabel: UILabel = {
+       let label = UILabel()
+        label.textAlignment = .right
+        label.text = "Tip:"
+        label.textColor = .black
+        
+        return label
+    }()
+    
     let totalLabel: UILabel = {
         let label = UILabel()
         label.textAlignment = .right
@@ -120,9 +129,21 @@ class ViewController: UIViewController {
         return label
     }()
     
+    let tipAmountReturnLabel: UILabel = {
+        let label = UILabel()
+        label.text = "$0.00"
+        label.textAlignment = .center
+        label.textColor = .green
+        label.layer.borderColor = #colorLiteral(red: 0.2549019754, green: 0.2745098174, blue: 0.3019607961, alpha: 1)
+        label.layer.borderWidth = 1
+        label.layer.cornerRadius = 4
+        
+        return label
+    }()
+    
     let returnLabel: UILabel = {
         let label = UILabel()
-        label.text = "0.00"
+        label.text = "$0.00"
         label.textAlignment = .center
         label.textColor = .green
         label.layer.borderColor = #colorLiteral(red: 0.2549019754, green: 0.2745098174, blue: 0.3019607961, alpha: 1)
@@ -142,7 +163,9 @@ class ViewController: UIViewController {
         self.view.addSubview(fifteenPercentButton)
         self.view.addSubview(twentyPercentButton)
         self.view.addSubview(buttonStackView)
+        self.view.addSubview(tipLabel)
         self.view.addSubview(totalLabel)
+        self.view.addSubview(tipAmountReturnLabel)
         self.view.addSubview(returnLabel)
     }
     
@@ -164,9 +187,13 @@ class ViewController: UIViewController {
         
         buttonStackView.anchor(top: tipPercentageLabel.bottomAnchor, bottom: nil, leading: self.safeArea.leadingAnchor, trailing: self.safeArea.trailingAnchor, topPadding: 20, bottomPadding: 0, leadingPadding: 20, trailingPadding: 20)
         
-        totalLabel.anchor(top: buttonStackView.bottomAnchor, bottom: nil, leading: self.safeArea.leadingAnchor, trailing: self.safeArea.trailingAnchor, topPadding: 200, bottomPadding: 0, leadingPadding: 125, trailingPadding: 125)
+        tipLabel.anchor(top: buttonStackView.bottomAnchor, bottom: nil, leading: self.safeArea.leadingAnchor, trailing: self.safeArea.trailingAnchor, topPadding: 200, bottomPadding: 0, leadingPadding: 125, trailingPadding: 125)
         
-        returnLabel.anchor(top: buttonStackView.bottomAnchor, bottom: nil, leading: totalLabel.trailingAnchor, trailing: self.safeArea.trailingAnchor, topPadding: 200, bottomPadding: 0, leadingPadding: 20, trailingPadding: 0)
+        tipAmountReturnLabel.anchor(top: buttonStackView.bottomAnchor, bottom: nil, leading: totalLabel.trailingAnchor, trailing: self.safeArea.trailingAnchor, topPadding: 200, bottomPadding: 0, leadingPadding: 10, trailingPadding: 10)
+        
+        totalLabel.anchor(top: tipLabel.bottomAnchor, bottom: nil, leading: self.safeArea.leadingAnchor, trailing: self.safeArea.trailingAnchor, topPadding: 20, bottomPadding: 0, leadingPadding: 125, trailingPadding: 125)
+        
+        returnLabel.anchor(top: tipAmountReturnLabel.bottomAnchor, bottom: nil, leading: totalLabel.trailingAnchor, trailing: self.safeArea.trailingAnchor, topPadding: 20, bottomPadding: 0, leadingPadding: 10, trailingPadding: 10)
     }
     
     func activateButtons() {
@@ -179,25 +206,29 @@ class ViewController: UIViewController {
             guard let bill = Double(totalBeforeTip) else {return}
             let tip = bill * 0.05
             let billTotal = bill + tip
-            returnLabel.text = "\(billTotal)"
+            returnLabel.text = "$\(billTotal)"
+            tipAmountReturnLabel.text = "$\(tip)"
         case tenPercentButton:
             totalBeforeTip = billTextField.text ?? ""
             guard let bill = Double(totalBeforeTip) else {return}
             let tip = bill * 0.10
             let billTotal = bill + tip
-            returnLabel.text = "\(billTotal)"
+            returnLabel.text = "$\(billTotal)"
+            tipAmountReturnLabel.text = "$\(tip)"
         case fifteenPercentButton:
             totalBeforeTip = billTextField.text ?? ""
             guard let bill = Double(totalBeforeTip) else {return}
             let tip = bill * 0.15
             let billTotal = bill + tip
-            returnLabel.text = "\(billTotal)"
+            returnLabel.text = "$\(billTotal)"
+            tipAmountReturnLabel.text = "$\(tip)"
         case twentyPercentButton:
             totalBeforeTip = billTextField.text ?? ""
             guard let bill = Double(totalBeforeTip) else {return}
             let tip = bill * 0.20
             let billTotal = bill + tip
-            returnLabel.text = "\(billTotal)"
+            returnLabel.text = "$\(billTotal)"
+            tipAmountReturnLabel.text = "$\(tip)"
         default:
             print("error")
         }
